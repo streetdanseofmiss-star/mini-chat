@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini Chat</title>
+</head>
+<body>
+
+<h2>Mini Chat Firebase</h2>
+
+<input type="text" id="nom" placeholder="Ton nom">
+<br><br>
+
+<input type="text" id="msg" placeholder="Ton message">
+<button onclick="envoyer()">Envoyer</button>
+
+<ul id="messages"></ul>
+
+<script>
+
+let url = "https://meka-77f6a-default-rtdb.europe-west1.firebasedatabase.app/Messages.json";
+
+// ENVOYER MESSAGE
+function envoyer() {
+  let nom = document.getElementById("nom").value;
+  let msg = document.getElementById("msg").value;
+
+  let message = {
+    nom: nom,
+    texte: msg
+  };
+
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(message)
+  });
+
+  document.getElementById("msg").value = "";
+}
+
+// LIRE MESSAGES EN CONTINU
+function chargerMessages() {
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+
+      let liste = document.getElementById("messages");
+      liste.innerHTML = "";
+
+      for (let key in data) {
+        let li = document.createElement("li");
+        li.textContent = data[key].nom + " : " + data[key].texte;
+        liste.appendChild(li);
+      }
+
+    });
+}
+
+// ACTUALISATION AUTOMATIQUE
+setInterval(chargerMessages, 2000);
+
+</script>
+
+</body>
+</html>
